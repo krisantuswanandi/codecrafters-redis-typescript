@@ -1,8 +1,9 @@
 import * as net from "net";
+import resp, { RespType } from "./resp";
 
 const server: net.Server = net.createServer((connection: net.Socket) => {
   connection.on("data", () => {
-    connection.write("+PONG\r\n");
+    connection.write(resp.stringify({ type: RespType.String, value: "PONG" }));
   });
 });
 
