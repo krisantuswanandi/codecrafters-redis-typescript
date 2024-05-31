@@ -6,27 +6,32 @@ export enum RespType {
   Array = "*",
 }
 
-type RespValue =
-  | {
-      type: RespType.Integer;
-      value: number;
-    }
-  | {
-      type: RespType.String;
-      value: string;
-    }
-  | {
-      type: RespType.Error;
-      value: Error;
-    }
-  | {
-      type: RespType.Bulk;
-      value: string | null;
-    }
-  | {
-      type: RespType.Array;
-      value: RespValue[];
-    };
+export type RespInteger = {
+  type: RespType.Integer;
+  value: number;
+};
+export type RespString = {
+  type: RespType.String;
+  value: string;
+};
+export type RespError = {
+  type: RespType.Error;
+  value: Error;
+};
+export type RespBulk = {
+  type: RespType.Bulk;
+  value: string | null;
+};
+export type RespArray = {
+  type: RespType.Array;
+  value: RespValue[];
+};
+export type RespValue =
+  | RespInteger
+  | RespString
+  | RespError
+  | RespBulk
+  | RespArray;
 
 const CRLF = "\r\n";
 
@@ -132,7 +137,7 @@ export function stringify(data: RespValue) {
     }
   }
 
-  return JSON.stringify(read(data));
+  return read(data);
 }
 
 export default {
