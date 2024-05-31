@@ -14,9 +14,14 @@ function handleCommand(data: Buffer): RespValue {
     case Command.Pong:
       return { type: RespType.String, value: "PONG" };
     default:
+      const _args = args
+        .slice(1)
+        .map((arg) => `'${arg}'`)
+        .join(" ");
+      const msg = `ERR unknown command '${cmd}', with args beginning with: ${_args}`;
       return {
-        type: RespType.Bulk,
-        value: null,
+        type: RespType.Error,
+        value: new Error(msg),
       };
   }
 }
