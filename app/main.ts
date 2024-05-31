@@ -1,27 +1,45 @@
 import * as net from "net";
 import RESP, { RespArray, RespType, type RespValue } from "./resp";
+import * as ErrorType from "./error";
 
 enum Command {
   Pong = "PONG",
+  Echo = "ECHO",
+}
+
+function parseCommand(data: Buffer): [string, string[]] {
+  const raw = RESP.parse(data.toString()) as RespArray;
+  const [cmd, ...args] = raw.value.map((item) => item.value as string);
+  return [cmd, args];
 }
 
 function handleCommand(data: Buffer): RespValue {
-  const rawArgs = RESP.parse(data.toString()) as RespArray;
-  const args = rawArgs.value.map((item) => item.value as string);
-  const cmd = args[0];
+  const [cmd, args] = parseCommand(data);
+  if (!cmd) {
+    return {
+      type: RespType.Error,
+      value: ErrorType.invalidCommand(),
+    };
+  }
 
   switch (cmd.toUpperCase()) {
     case Command.Pong:
       return { type: RespType.String, value: "PONG" };
+    case Command.Echo:
+      if (args.length !== 1) {
+        return {
+          type: RespType.Error,
+          value: ErrorType.wrongNumberOfArguments(cmd),
+        };
+      }
+      return {
+        type: RespType.Bulk,
+        value: args[0],
+      };
     default:
-      const _args = args
-        .slice(1)
-        .map((arg) => `'${arg}'`)
-        .join(" ");
-      const msg = `ERR unknown command '${cmd}', with args beginning with: ${_args}`;
       return {
         type: RespType.Error,
-        value: new Error(msg),
+        value: ErrorType.unknownCommand(cmd, args),
       };
   }
 }
