@@ -1,5 +1,7 @@
 import { RespType, RespValue } from "../resp";
+import * as info from "../info";
 
 export function handler(_cmd: string, _args: string[]): RespValue {
-  return { type: RespType.Bulk, value: "# Replication\nrole:master" };
+  const role = info.get("role");
+  return { type: RespType.Bulk, value: `# Replication\nrole:${role}` };
 }
