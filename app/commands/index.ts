@@ -19,7 +19,8 @@ export async function handleCommand(data: Buffer): Promise<RespValue> {
   try {
     const { handler } = await import(`./${cmd.toLowerCase()}`);
     return handler(cmd, args);
-  } catch {
+  } catch (e: any) {
+    console.log(e);
     return {
       type: RespType.Error,
       value: ErrorType.unknownCommand(cmd, args),

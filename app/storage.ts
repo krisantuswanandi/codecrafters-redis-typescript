@@ -1,9 +1,24 @@
-const storage = new Map<string, string>();
+const storage = new Map<string, StorageConfig & { value: Value }>();
 
-export function set(key: string, value: string) {
-  storage.set(key, value);
+type Value = string;
+
+export type StorageConfig = {
+  expiredAt?: number;
+};
+
+export function set(key: string, value: Value, config: StorageConfig) {
+  storage.set(key, { value, ...config });
 }
 
 export function get(key: string) {
-  return storage.get(key);
+  const item = storage.get(key);
+
+  if (!item) return null;
+
+  if (item.expiredAt && item.expiredAt < Date.now()) {
+    storage.delete(key);
+    return null;
+  }
+
+  return item.value;
 }
