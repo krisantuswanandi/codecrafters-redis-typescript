@@ -11,6 +11,8 @@ export function init(masterHost: string, masterPort: number, port: number) {
         socket.write(RESP.command(`REPLCONF listening-port ${port}`));
       } else if (step === 1) {
         socket.write(RESP.command("REPLCONF capa psync2"));
+      } else if (step === 2) {
+        socket.write(RESP.command("PSYNC ? -1"));
       }
       step++;
     });
