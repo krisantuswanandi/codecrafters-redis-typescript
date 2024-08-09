@@ -1,5 +1,7 @@
 import { RespType, RespValue } from "../resp";
+import * as info from "../info";
 
-export function handler(_cmd: string, args: string[]): RespValue {
-  return { type: RespType.String, value: `FULLRESYNC ${args[0]} 0` };
+export function handler(_cmd: string, _args: string[]): RespValue {
+  const replid = info.get("master_replid");
+  return { type: RespType.String, value: `FULLRESYNC ${replid} 0` };
 }

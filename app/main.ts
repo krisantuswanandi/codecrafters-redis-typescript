@@ -8,6 +8,7 @@ const port = Number(process.argv[3]) || 6379;
 const role = process.argv[5] ? "slave" : "master";
 
 info.set("role", role);
+info.set("master_replid", "8371b4fb1155b71f4a04d3e1bc3e18c4a990aeeb");
 
 if (role === "slave") {
   const [masterHost, masterPort] = process.argv[5].split(" ");
