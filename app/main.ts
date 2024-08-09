@@ -1,12 +1,18 @@
 import * as net from "net";
 import RESP from "./resp";
 import { handleCommand } from "./commands";
+import * as slave from "./slave";
 import * as info from "./info";
 
 const port = Number(process.argv[3]) || 6379;
 const role = process.argv[5] ? "slave" : "master";
 
 info.set("role", role);
+
+if (role === "slave") {
+  const [host, port] = process.argv[5].split(" ");
+  slave.init(host, Number(port));
+}
 
 const server: net.Server = net.createServer((connection: net.Socket) => {
   connection.on("data", async (data) => {
