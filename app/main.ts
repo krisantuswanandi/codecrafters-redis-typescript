@@ -10,8 +10,8 @@ const role = process.argv[5] ? "slave" : "master";
 info.set("role", role);
 
 if (role === "slave") {
-  const [host, port] = process.argv[5].split(" ");
-  slave.init(host, Number(port));
+  const [masterHost, masterPort] = process.argv[5].split(" ");
+  slave.init(masterHost, Number(masterPort), port);
 }
 
 const server: net.Server = net.createServer((connection: net.Socket) => {

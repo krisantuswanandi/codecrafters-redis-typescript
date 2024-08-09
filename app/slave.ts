@@ -1,14 +1,19 @@
 import * as net from "net";
-import RESP, { RespType } from "./resp";
+import RESP from "./resp";
 
-export function init(host: string, port: number) {
+let step = 0;
+
+export function init(masterHost: string, masterPort: number, port: number) {
   const socket = new net.Socket();
-  socket.connect(port, host, () => {
-    socket.write(
-      RESP.stringify({
-        type: RespType.Array,
-        value: [{ type: RespType.Bulk, value: "PING" }],
-      })
-    );
+  socket.connect(masterPort, masterHost, () => {
+    socket.on("data", () => {
+      if (step === 0) {
+        socket.write(RESP.command(`REPLCONF listening-port ${port}`));
+      } else if (step === 1) {
+        socket.write(RESP.command("REPLCONF capa psync2"));
+      }
+      step++;
+    });
+    socket.write(RESP.command("PING"));
   });
 }

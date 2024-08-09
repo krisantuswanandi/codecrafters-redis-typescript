@@ -140,7 +140,15 @@ export function stringify(data: RespValue) {
   return read(data);
 }
 
+export function command(command: string) {
+  return stringify({
+    type: RespType.Array,
+    value: command.split(" ").map((c) => ({ type: RespType.Bulk, value: c })),
+  });
+}
+
 export default {
   parse,
   stringify,
+  command,
 };
