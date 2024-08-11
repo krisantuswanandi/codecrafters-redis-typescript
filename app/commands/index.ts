@@ -1,4 +1,5 @@
 import RESP, { RespArray, RespType, type RespValue } from "../resp";
+import * as replica from "../replica";
 import * as ErrorType from "../error";
 import { Socket } from "net";
 
@@ -18,6 +19,10 @@ export async function handleCommand(
       type: RespType.Error,
       value: ErrorType.invalidCommand(),
     };
+  }
+
+  if (replica.shouldPropagate(cmd.toLowerCase())) {
+    setTimeout(() => replica.propagate(data));
   }
 
   try {
