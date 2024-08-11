@@ -17,7 +17,7 @@ if (role === "slave") {
 
 const server: net.Server = net.createServer((connection: net.Socket) => {
   connection.on("data", async (data) => {
-    const result = await handleCommand(data);
+    const result = await handleCommand(data, connection);
     connection.write(RESP.stringify(result));
   });
 });
